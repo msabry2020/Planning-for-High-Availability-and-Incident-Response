@@ -34,10 +34,12 @@ resource "aws_rds_cluster" "udacity_cluster-s" {
   skip_final_snapshot      = true
   storage_encrypted        = false
   depends_on = [aws_rds_cluster_parameter_group.cluster_pg-s]
+  replication_source_identifier   = var.primary_db_cluster_arn
+  backup_retention_period  = 5
 }
 
 resource "aws_rds_cluster_instance" "udacity_instance-s" {
-  count                = 1
+  count                = 2
   identifier           = "udacity-db-instance-${count.index}-s"
   cluster_identifier   = aws_rds_cluster.udacity_cluster-s.id
   instance_class       = "db.t3.medium" # Update this line
