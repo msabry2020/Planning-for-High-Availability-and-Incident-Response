@@ -1,8 +1,7 @@
 # Infrastructure
 
 ## AWS Zones
-Primary: ["us-east-2a","us-east-2b"]
-DR: ["us-west-1a", "us-west-1c"]
+Identify your zones here
 
 ## Servers and Clusters
 
@@ -34,13 +33,30 @@ Kubernetes Cluster: Hosts Grafana and Prometheus for monitoring.
 
 ## DR Plan
 ### Pre-Steps:
-Ensure the infrastructure is set up and working in the DR site.
-1- 3 EC2 Instances are up and running
-2- 3 EC2 Instances are accissable via ssh keys
-3- LB routes the traffic correctly to the web instances
-4- 2 Instances of RDS are working (writer and reader) 
 
+- Deploy Terraform infrastructure code to both primary and DR regions to ensure the following:
+- 3 EC2 instances are up and running in the DR region using the same custom AMI.
+- SSH access is configured and tested for accessing the web servers.
+- Application Load Balancer (ALB) is routing traffic correctly to the DR EC2 instances.
+- RDS cluster is deployed with 2 nodes (writer and reader) and configured for replication.
+- Kubernetes cluster is deployed with Prometheus and Grafana configured for monitoring DR infrastructure.
 
 ## Steps:
-1- Configure the DNS to point to the DR load balancer. 
-2- Failover to the Secondary DB in DR site
+
+1- Verify RDS replication status
+2- Promote DR RDS instance to primary
+3- Execute failover test and update application configuration (if needed) to point to the new DB endpoint.
+4- Configure Route 53 to point to the DR region’s Application Load Balancer.
+5- Test application connectivity after DNS change
+6- Verify Web pages load correctly.
+7- Verify Database connections are functional.
+8- Monitoring dashboards reflect DR metrics 
+9- Confirm the predefined SLIs/SLOs are met
+
+## Timing & Validation Checklist
+
+- Terraform DR deployment	~30–60 mins	(All resources created and running)
+- RDS replication check 	~15-20 mins	(Replica is in sync and healthy)
+- DNS update	            ~15–20 mins	(DNS resolves to DR ALB)
+- Application test	        ~15-20 mins	(App loads, Test DB queries)
+- Monitoring validation	    ~30    mins	(Metrics visible in Grafana and SLI/SLOs are met)
