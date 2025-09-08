@@ -1,7 +1,8 @@
 # Infrastructure
 
 ## AWS Zones
-Identify your zones here
+Primary: ["us-east-2a","us-east-2b"]
+DR: ["us-west-1a", "us-west-1c"]
 
 ## Servers and Clusters
 
